@@ -9,6 +9,8 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
+import * as Keychain from 'react-native-keychain';
+
 import loginImage from '../../static/login.png';
 
 class Login extends React.Component {
@@ -16,6 +18,23 @@ class Login extends React.Component {
     email: '',
     password: '',
   };
+
+  componentDidMount() {
+    Keychain.getGenericPassword({
+      service: 'Test2222',
+      authenticationPrompt: {
+        title: 'Unlock Smart Clock App',
+      },
+    })
+      .then((res) => {
+        if (res) {
+          this.props.navigation.navigate('Home');
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 
   handleChange = (name, value) => {
     this.setState({[name]: value});
@@ -25,7 +44,19 @@ class Login extends React.Component {
     let {email, password} = this.state;
 
     if (email == 'rmishra_50be18@thapar.edu' && password == '12345678') {
-      this.props.navigation.navigate('Home');
+      Keychain.setGenericPassword('name', 'value', {
+        service: 'Test2222',
+        accessControl:
+          Keychain.ACCESS_CONTROL.BIOMETRY_CURRENT_SET_OR_DEVICE_PASSCODE,
+      })
+        .then((res) => {
+          console.log(res);
+          this.props.navigation.navigate('Home');
+        })
+        .catch((err) => {
+          console.log(err);
+          this.props.navigation.navigate('Home');
+        });
     } else {
       alert('Email or Password is wrong. Please try again.');
     }
