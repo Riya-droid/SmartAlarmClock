@@ -7,7 +7,7 @@ import LoginScreen from '../Screens/LoginScreen';
 function SettingsScreen() {
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <Text>Home Page</Text>
+      <Text>Welcome to Smart Clock Home Page</Text>
     </View>
   );
 }
@@ -19,7 +19,7 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator headerMode={'none'}>
         <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Notifications" component={SettingsScreen} />
+        <Stack.Screen name="Home" component={SettingsScreen} />
         <Stack.Screen name="Profile" component={SettingsScreen} />
         <Stack.Screen name="Settings" component={SettingsScreen} />
       </Stack.Navigator>
