@@ -117,7 +117,17 @@ class Settings extends React.Component {
 
   logout = async () => {
     await auth().signOut();
-    this.props.navigation.navigate('Login');
+    Keychain.resetGenericPassword({
+      service: 'Test2222',
+    })
+      .then((res) => {
+        console.log(res);
+        this.props.navigation.navigate('Login');
+      })
+      .catch((err) => {
+        console.log(err);
+        this.props.navigation.navigate('Login');
+      });
   };
 
   changeuserdata = async (key, toshow) => {
