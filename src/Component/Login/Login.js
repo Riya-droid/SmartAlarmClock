@@ -12,11 +12,15 @@ import {
 import * as Keychain from 'react-native-keychain';
 
 import loginImage from '../../static/login.png';
+import auth from '@react-native-firebase/auth';
+import Loader from '../Loader';
 
 class Login extends React.Component {
   state = {
     email: '',
     password: '',
+    error: '',
+    loading: false,
   };
 
   componentDidMount() {
@@ -27,6 +31,7 @@ class Login extends React.Component {
       },
     })
       .then((res) => {
+        console.log(res);
         if (res) {
           this.props.navigation.navigate('Home');
         }
@@ -40,25 +45,73 @@ class Login extends React.Component {
     this.setState({[name]: value});
   };
 
-  handleSubmit = () => {
+  handleSubmit = async () => {
     let {email, password} = this.state;
+    this.setState({error: '', loading: true});
 
-    if (email == 'rmishra_50be18@thapar.edu' && password == '12345678') {
-      Keychain.setGenericPassword('name', 'value', {
-        service: 'Test2222',
-        accessControl:
-          Keychain.ACCESS_CONTROL.BIOMETRY_CURRENT_SET_OR_DEVICE_PASSCODE,
-      })
-        .then((res) => {
-          console.log(res);
-          this.props.navigation.navigate('Home');
-        })
-        .catch((err) => {
-          console.log(err);
-          this.props.navigation.navigate('Home');
-        });
-    } else {
-      alert('Email or Password is wrong. Please try again.');
+    try {
+      let value = await auth().createUserWithEmailAndPassword(email, password);
+      this.navigateToHome();
+    } catch (error) {
+      if (error.code == 'auth/email-already-in-use') {
+        this.signIn(email, password);
+      } else {
+        this.handleError(error);
+      }
+    }
+  };
+
+  signIn = async (email, password) => {
+    try {
+      let value = await auth().signInWithEmailAndPassword(email, password);
+      this.navigateToHome();
+    } catch (error) {
+      this.handleError(error);
+    }
+  };
+
+  navigateToHome = () => {
+    this.setState({loading: false}, () => {
+      this.props.navigation.navigate('Home');
+    });
+  };
+
+  handleError = (error) => {
+    switch (error.code) {
+      case 'auth/wrong-password':
+        this.setState({error: 'The password is wrong.', loading: false});
+        return;
+
+      case 'auth/invalid-email':
+        this.setState({error: 'Email address is invalid.', loading: false});
+        return;
+      default:
+        this.setState({error: error.code, loading: false});
+        return;
+    }
+  };
+
+  keyChainSet = () => {
+    Keychain.setGenericPassword('name', 'value', {
+      service: 'Test2222',
+      accessControl:
+        Keychain.ACCESS_CONTROL.BIOMETRY_CURRENT_SET_OR_DEVICE_PASSCODE,
+    });
+  };
+
+  renderError = () => {
+    let error = this.state.error;
+    if (error) {
+      return (
+        <Text
+          style={{
+            color: 'red',
+            width: '90%',
+            marginTop: 10,
+          }}>
+          {this.state.error}
+        </Text>
+      );
     }
   };
 
@@ -86,6 +139,7 @@ class Login extends React.Component {
               value={this.state.password}
               onChangeText={(text) => this.handleChange('password', text)}
             />
+            {this.renderError()}
             <TouchableOpacity
               style={style.loginButton}
               onPress={this.handleSubmit}>
@@ -98,6 +152,7 @@ class Login extends React.Component {
             </TouchableOpacity>
           </View>
         </ScrollView>
+        <Loader loading={this.state.loading} />
       </SafeAreaView>
     );
   }

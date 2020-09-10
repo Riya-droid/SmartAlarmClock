@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "784777589450",
+    "firebase_url": "https://smartalarmclock-7f74a.firebaseio.com",
+    "project_id": "smartalarmclock-7f74a",
+    "storage_bucket": "smartalarmclock-7f74a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:784777589450:android:a36c6b46f703624e60fa33",
+        "android_client_info": {
+          "package_name": "com.smartalarmclock"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "784777589450-4dbbms3tot3lbqu8ifi4ubq4dcben6mc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.smartalarmclock",
+            "certificate_hash": "38ef036a15718ca805633c8e10315df244ddf15e"
+          }
+        },
+        {
+          "client_id": "784777589450-sq8p2uggeus2kfthemr6phhmsthunase.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCc8OPNvG9_euZI7eUGOvjV8NTD9zj1-WI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "784777589450-sq8p2uggeus2kfthemr6phhmsthunase.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
