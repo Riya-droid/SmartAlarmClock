@@ -28,6 +28,8 @@ import ImagePicker from 'react-native-image-picker';
 import auth from '@react-native-firebase/auth';
 import storage from '@react-native-firebase/storage';
 
+import * as Keychain from 'react-native-keychain';
+
 const options = {
   title: 'Select profile pic',
   allowsEditing: true,
