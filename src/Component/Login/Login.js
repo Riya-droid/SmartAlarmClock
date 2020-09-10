@@ -71,9 +71,23 @@ class Login extends React.Component {
   };
 
   navigateToHome = () => {
-    this.setState({loading: false}, () => {
-      this.props.navigation.navigate('Home');
-    });
+    Keychain.setGenericPassword('name', 'value', {
+      service: 'Test2222',
+      accessControl:
+        Keychain.ACCESS_CONTROL.BIOMETRY_CURRENT_SET_OR_DEVICE_PASSCODE,
+    })
+      .then((res) => {
+        console.log(res);
+        this.setState({loading: false}, () => {
+          this.props.navigation.navigate('Home');
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({loading: false}, () => {
+          this.props.navigation.navigate('Home');
+        });
+      });
   };
 
   handleError = (error) => {
