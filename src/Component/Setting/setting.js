@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Modal,
   Dimensions,
+  SafeAreaView,
 } from 'react-native';
 
 import AsyncStorage from '@react-native-community/async-storage';
@@ -23,7 +24,7 @@ import styles from './styles/style';
 import modal from './styles/modalstyle';
 
 import Snackbar from 'react-native-snackbar';
-import {UIActivityIndicator} from 'react-native-indicators';
+import { UIActivityIndicator } from 'react-native-indicators';
 import ImagePicker from 'react-native-image-picker';
 import auth from '@react-native-firebase/auth';
 import storage from '@react-native-firebase/storage';
@@ -70,23 +71,23 @@ class Settings extends React.Component {
   }
 
   addPassword = () => {
-    this.setState({visible: true});
+    this.setState({ visible: true });
   };
 
   closePassword = () => {
-    this.setState({visible: false});
+    this.setState({ visible: false });
   };
 
   changepassword = async () => {
     return null;
     if (this.state.password.current == '') {
-      this.setState({passworderror: 'Enter current password'});
+      this.setState({ passworderror: 'Enter current password' });
     } else if (this.state.password.new == '') {
-      this.setState({passworderror: 'Enter new password'});
+      this.setState({ passworderror: 'Enter new password' });
     } else if (this.state.password.confirm == '') {
-      this.setState({passworderror: 'Confirm new password'});
+      this.setState({ passworderror: 'Confirm new password' });
     } else if (this.state.password.new != this.state.password.confirm) {
-      this.setState({passworderror: "New password doesn't match"});
+      this.setState({ passworderror: "New password doesn't match" });
     } else {
       this.setState({
         passwordloading: true,
@@ -101,7 +102,7 @@ class Settings extends React.Component {
         currentPassword: this.state.password.current,
       });
       if (res[0]) {
-        this.setState({visible: false, passwordloading: false}, () => {
+        this.setState({ visible: false, passwordloading: false }, () => {
           setTimeout(() => {
             Snackbar.show({
               text: 'Password changed successfully',
@@ -111,13 +112,13 @@ class Settings extends React.Component {
           }, 400);
         });
       } else {
-        this.setState({passworderror: res[1], passwordloading: false});
+        this.setState({ passworderror: res[1], passwordloading: false });
       }
     }
   };
 
   closeconfigure = () => {
-    this.setState({modal2: false});
+    this.setState({ modal2: false });
   };
 
   logout = async () => {
@@ -163,7 +164,7 @@ class Settings extends React.Component {
       } else if (res.error) {
         err = res.error;
       } else {
-        this.setState({loading: true});
+        this.setState({ loading: true });
         // upload photo url
         this.updateProfile(res.imagePath);
       }
@@ -178,14 +179,14 @@ class Settings extends React.Component {
   };
 
   updateProfile = async (imagePath) => {
-    let {uid} = auth().currentUser;
+    let { uid } = auth().currentUser;
     let fileName = imagePath.split('/').pop();
     let ref = storage()
       .ref('/users/' + uid)
       .child(fileName);
 
     try {
-      await ref.putFile(imagePath, {cacheControl: false});
+      await ref.putFile(imagePath, { cacheControl: false });
     } catch (error) {
       return error;
     }
@@ -246,7 +247,7 @@ class Settings extends React.Component {
               value={this.state.password.current}
               onChangeText={(text) =>
                 this.setState({
-                  password: {...this.state.password, current: text},
+                  password: { ...this.state.password, current: text },
                 })
               }
             />
@@ -256,7 +257,7 @@ class Settings extends React.Component {
               placeholder="Enter new password"
               value={this.state.password.new}
               onChangeText={(text) =>
-                this.setState({password: {...this.state.password, new: text}})
+                this.setState({ password: { ...this.state.password, new: text } })
               }
             />
             <TextInput
@@ -266,14 +267,14 @@ class Settings extends React.Component {
               value={this.state.password.confirm}
               onChangeText={(text) =>
                 this.setState({
-                  password: {...this.state.password, confirm: text},
+                  password: { ...this.state.password, confirm: text },
                 })
               }
             />
             {this.state.passworderror != undefined &&
-            this.state.passworderror != '' ? (
-              <Text style={styles.error}>{this.state.passworderror}</Text>
-            ) : null}
+              this.state.passworderror != '' ? (
+                <Text style={styles.error}>{this.state.passworderror}</Text>
+              ) : null}
             {this.state.passwordloading ? (
               <TouchableOpacity
                 style={modal.savebutton}
@@ -281,15 +282,15 @@ class Settings extends React.Component {
                 <UIActivityIndicator color="#fff" size={20} />
               </TouchableOpacity>
             ) : (
-              <TouchableOpacity
-                style={modal.savebutton}
-                onPress={this.changepassword}>
-                <Text
-                  style={{color: '#fff', alignSelf: 'center', fontSize: 17}}>
-                  Save
+                <TouchableOpacity
+                  style={modal.savebutton}
+                  onPress={this.changepassword}>
+                  <Text
+                    style={{ color: '#fff', alignSelf: 'center', fontSize: 17 }}>
+                    Save
                 </Text>
-              </TouchableOpacity>
-            )}
+                </TouchableOpacity>
+              )}
           </ScrollView>
         </View>
       </Modal>
@@ -298,69 +299,71 @@ class Settings extends React.Component {
 
   render() {
     return (
-      <ScrollView style={styles.containerStyle}>
-        {this.renderLoading()}
-        <View style={styles.topbar} />
-        <View style={styles.restarea}>
-          <TouchableOpacity activeOpacity={1} onPress={this.addprofilepic}>
-            <View>
-              <Image
-                source={{
-                  uri:
-                    'https://image.freepik.com/free-vector/smiling-girl-avatar_102172-32.jpg',
-                }}
-                style={styles.profileimage}
+      <>
+        <SafeAreaView />
+        <ScrollView style={styles.containerStyle}>
+          {this.renderLoading()}
+          <View style={styles.topbar} />
+          <View style={styles.restarea}>
+            <TouchableOpacity activeOpacity={1} onPress={this.addprofilepic}>
+              <View>
+                <Image
+                  source={{
+                    uri:
+                      'https://image.freepik.com/free-vector/smiling-girl-avatar_102172-32.jpg',
+                  }}
+                  style={styles.profileimage}
+                />
+                <Image source={camera} style={styles.camera} />
+              </View>
+            </TouchableOpacity>
+            <View style={styles.firstformcomponent}>
+              <Text style={styles.label}>First Name</Text>
+              <TextInput
+                style={styles.textinput}
+                placeholder="Enter your name"
+                value={this.state.user_data.displayName}
+                onChangeText={(text) =>
+                  this.setState({
+                    user_data: { ...this.state.user_data, displayName: text },
+                  })
+                }
+                onBlur={() => this.changeuserdata('displayName', 'Name')}
               />
-              <Image source={camera} style={styles.camera} />
             </View>
-          </TouchableOpacity>
-          <View style={styles.firstformcomponent}>
-            <Text style={styles.label}>First Name</Text>
-            <TextInput
-              style={styles.textinput}
-              placeholder="Enter your name"
-              value={this.state.user_data.displayName}
-              onChangeText={(text) =>
-                this.setState({
-                  user_data: {...this.state.user_data, displayName: text},
-                })
-              }
-              onBlur={() => this.changeuserdata('displayName', 'Name')}
-            />
-          </View>
-          <View style={styles.otherformcomponent}>
-            <Text style={styles.label}>Email address</Text>
-            <TextInput
-              style={styles.textinput}
-              placeholder="Enter email address"
-              value={this.state.user_data.email}
-              onChangeText={(text) =>
-                this.setState({
-                  user_data: {...this.state.user_data, email: text},
-                })
-              }
-              onBlur={() => this.changeuserdata('email', 'Email address')}
-            />
-          </View>
-          <View style={styles.separator} />
+            <View style={styles.otherformcomponent}>
+              <Text style={styles.label}>Email address</Text>
+              <TextInput
+                style={styles.textinput}
+                placeholder="Enter email address"
+                value={this.state.user_data.email}
+                onChangeText={(text) =>
+                  this.setState({
+                    user_data: { ...this.state.user_data, email: text },
+                  })
+                }
+                onBlur={() => this.changeuserdata('email', 'Email address')}
+              />
+            </View>
+            <View style={styles.separator} />
 
-          <TouchableOpacity style={styles.navigator} onPress={this.todolist}>
-            <Text style={styles.forwardtitle}>To do list</Text>
-            <Image source={forward} style={styles.forwardarrow} />
-          </TouchableOpacity>
+            <TouchableOpacity style={styles.navigator} onPress={this.todolist}>
+              <Text style={styles.forwardtitle}>To do list</Text>
+              <Image source={forward} style={styles.forwardarrow} />
+            </TouchableOpacity>
 
-          <TouchableOpacity style={styles.password} onPress={this.addPassword}>
-            <Text style={styles.passwordtitle}>{`Change Password   `}</Text>
-            <Image source={password} style={styles.forwardarrow} />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.logout} onPress={this.logout}>
-            <Text style={styles.logouttitle}>{'Logout  '} </Text>
-            <Image source={logout} style={styles.forwardarrow} />
-          </TouchableOpacity>
-        </View>
-        {this.renderPasswordModal()}
-      </ScrollView>
-    );
+            <TouchableOpacity style={styles.password} onPress={this.addPassword}>
+              <Text style={styles.passwordtitle}>{`Change Password   `}</Text>
+              <Image source={password} style={styles.forwardarrow} />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.logout} onPress={this.logout}>
+              <Text style={styles.logouttitle}>{'Logout  '} </Text>
+              <Image source={logout} style={styles.forwardarrow} />
+            </TouchableOpacity>
+          </View>
+          {this.renderPasswordModal()}
+        </ScrollView>
+      </>);
   }
 }
 

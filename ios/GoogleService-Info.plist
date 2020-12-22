@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>784777589450-rc4s00rqof4vqfhnvml8tr0q3c1vm6e5.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.784777589450-rc4s00rqof4vqfhnvml8tr0q3c1vm6e5</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>784777589450-4dbbms3tot3lbqu8ifi4ubq4dcben6mc.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBUgnW7K84-ccccBSHAu_iZYoG0EqOdM74</string>
+	<key>GCM_SENDER_ID</key>
+	<string>784777589450</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>org.reactjs.native.example.SmartAlarmClock</string>
+	<key>PROJECT_ID</key>
+	<string>smartalarmclock-7f74a</string>
+	<key>STORAGE_BUCKET</key>
+	<string>smartalarmclock-7f74a.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:784777589450:ios:965096dcd02a214260fa33</string>
+	<key>DATABASE_URL</key>
+	<string>https://smartalarmclock-7f74a.firebaseio.com</string>
+</dict>
+</plist>

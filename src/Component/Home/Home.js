@@ -5,55 +5,33 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
-  Dimensions,
+  SafeAreaView,
+  StyleSheet,
+  Dimensions
 } from 'react-native';
-import {FloatingAction} from 'react-native-floating-action';
-
-import todo from '../../assets/to-do-list.png';
-import reminder from '../../assets/reminder.png';
-import alarm from '../../assets/alarm-clock.png';
-import location from '../../assets/pin.png';
+import { FloatingAction } from 'react-native-floating-action';
 import database from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
 
 import * as Keychain from 'react-native-keychain';
 import Loader from '../Loader';
+import { actions } from './actions'
+import moment from 'moment'
+import { SwipeListView } from 'react-native-swipe-list-view';
+
+import deleteimage from '../../static/deleterow.png';
+import clock from '../../static/clock.png';
 
 const Routes = {
   add_reminder: 'AddReminder',
+  add_todo: 'AddTodo'
 };
-
-const actions = [
-  {
-    text: 'Add Todo',
-    name: 'add_todo',
-    position: 2,
-    icon: todo,
-  },
-  {
-    text: 'Add Reminder',
-    name: 'add_reminder',
-    position: 1,
-    icon: reminder,
-  },
-  {
-    text: 'Add Location',
-    name: 'add_location',
-    position: 3,
-    icon: location,
-  },
-  {
-    text: 'Add Alarm',
-    name: 'add_alarm',
-    position: 4,
-    icon: alarm,
-  },
-];
 
 class Home extends React.Component {
   state = {
     data: [],
     loading: true,
+    todos: []
   };
 
   handleLogout = () => {
@@ -72,15 +50,38 @@ class Home extends React.Component {
 
   componentDidMount() {
     this.uid = auth().currentUser.uid;
-    this.remindersRef = database().ref('reminders').child(this.uid);
+    this.remindersRef = database().ref('reminders').child(this.uid).limitToLast(3)
+    this.todoRef = database().ref('todos').child(this.uid).limitToLast(3)
 
-    this.remindersRef.on('value', (snapshot) => this.setData(snapshot));
+    this.remindersRef.on('value', (snapshot) => {
+      this.setData(snapshot)
+    });
+    this.todoRef.on('value', (snapshot) => {
+      this.setTodoData(snapshot)
+    });
   }
 
-  setData(snapshot) {
-    if (snapshot.val()) this.setState({data: Object.values(snapshot.val())});
+  setTodoData(snapshot) {
+    if (snapshot.val()) {
+      this.setState({
+        todos: Object.keys(snapshot.val()).map(id => { return { key: id, ...snapshot.val()[id] } })
+      });
+    } else {
+      this.setState({ todos: [] })
+    }
+    this.setState({ loading: false });
+  }
 
-    this.setState({loading: false});
+
+  setData(snapshot) {
+    if (snapshot.val()) {
+      this.setState({
+        data: Object.keys(snapshot.val()).map(id => { return { key: id, ...snapshot.val()[id] } })
+      });
+    } else {
+      this.setState({ data: [] })
+    }
+    this.setState({ loading: false });
   }
 
   componentWillUnmount() {
@@ -89,134 +90,264 @@ class Home extends React.Component {
 
   render() {
     return (
-      <ScrollView
-        style={{
-          flex: 1,
-          backgroundColor: 'white',
-        }}
-        contentContainerStyle={{
-          height: '100%',
-        }}>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            padding: 10,
-          }}>
-          <View>
-            <Text
+      <>
+        <SafeAreaView />
+        <View style={styles.scrollview}>
+          <View style={styles.topbar}>
+            <View>
+              <Text style={styles.dash}>Dashboard</Text>
+              <Text style={{ fontSize: 12, marginTop: 5 }}>
+                {moment(new Date()).format('dddd, DD MMM,YYYY')}
+              </Text>
+            </View>
+            <TouchableOpacity
+              onPress={() => this.props.navigation.navigate('Settings')}
               style={{
-                fontSize: 18,
-                fontWeight: '600',
-              }}>
-              Dashboard
-            </Text>
-            <Text
-              style={{
-                fontSize: 12,
-              }}>
-              {new Date().toDateString()}
-            </Text>
-          </View>
-          <TouchableOpacity
-            onPress={() => this.props.navigation.navigate('Settings')}
-            style={{
-              marginLeft: 'auto',
-            }}>
-            <Image
-              source={{
-                uri:
-                  'https://image.freepik.com/free-vector/smiling-girl-avatar_102172-32.jpg',
-              }}
-              style={{
-                width: 50,
-                height: 50,
-                // resizeMode: 'contain',
-                borderColor: 'red',
                 marginLeft: 'auto',
-                borderRadius: 25,
-              }}
-            />
-          </TouchableOpacity>
-        </View>
-
-        <View
-          style={{
-            padding: 10,
-            flex: 1,
-            borderWidth: 1,
-            height: '100%',
-            borderColor: '#fff',
-          }}>
-          <Text
-            style={{
-              fontWeight: '600',
-              fontSize: 18,
-            }}>
-            Reminders
-          </Text>
-          <View
-            style={{
-              flex: 1,
-              alignItems: 'center',
-            }}>
-            {this.state.data.map((item, index) => (
-              <View
-                key={index}
-                style={{
-                  marginTop: 20,
-                  width: '100%',
-                  paddingHorizontal: 10,
-                  paddingVertical: 5,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  height: 50,
-                  shadowColor: '#000',
-                  shadowOffset: {
-                    width: 0,
-                    height: 1,
-                  },
-                  shadowOpacity: 0.22,
-                  shadowRadius: 2.22,
-
-                  elevation: 3,
-                  backgroundColor: 'white',
-                  borderRadius: 4,
-                }}>
-                <View>
-                  <Text>{item.title}</Text>
-                  <Text
-                    style={{
-                      fontSize: 10,
-                    }}>
-                    {item.desc}
-                  </Text>
-                </View>
-                <Text
-                  style={{
-                    marginLeft: 'auto',
-                  }}>
-                  {new Date(item.date).toLocaleTimeString()}
-                </Text>
-              </View>
-            ))}
+              }}>
+              <Image
+                source={{
+                  uri:
+                    'https://image.freepik.com/free-vector/smiling-girl-avatar_102172-32.jpg',
+                }}
+                style={styles.profile}
+              />
+            </TouchableOpacity>
           </View>
+
+          <View style={styles.reminder}>
+            <Text style={styles.dash}>Reminders</Text>
+            {this.state.data.length == 0 ? <Text style={styles.nodata}>No data</Text> :
+              <>
+                <SwipeListView
+                  data={this.state.data}
+                  renderItem={(data) => {
+                    return (
+                      <TouchableOpacity
+                        activeOpacity={1}
+                        style={styles.row}
+                        onPress={() => this.props.navigation.navigate('AddReminder', { data: JSON.stringify(data.item) })}
+                      >
+                        <View style={styles.itemText}>
+                          <Text style={styles.text}>{data.item.title}</Text>
+                          <Text style={styles.desc}>{data.item.desc.substr(0, 100)}</Text>
+                        </View>
+                        <View style={styles.timeWrapper}>
+                          <Image source={clock} style={styles.alarm} />
+                          <Text style={styles.date}>{moment(new Date(data.item.date)).format('MMM DD, hh:mm a')}</Text>
+                        </View>
+                      </TouchableOpacity>
+                    )
+                  }}
+                  keyExtractor={(_, ind) => ind.toString()}
+                  style={styles.liststyle}
+                  leftOpenValue={60}
+                  renderHiddenItem={(data) => (
+                    <TouchableOpacity style={styles.rowback} onPress={() => {
+                      let uid = auth().currentUser.uid;
+                      let reminders = database().ref('reminders').child(uid)
+                      reminders.child(data.item.key).set(null)
+                    }}>
+                      <Image source={deleteimage} style={styles.deleteimage} />
+                    </TouchableOpacity>
+                  )}
+                />
+                {this.state.data.length == 3 &&
+                  <TouchableOpacity style={styles.seebutton} onPress={() => this.props.navigation.navigate('Reminder')}>
+                    <Text style={styles.seetext}>See All</Text>
+                  </TouchableOpacity>
+                }
+              </>
+            }
+          </View>
+
+          <View style={styles.reminder2}>
+            <Text style={styles.dash}>To dos</Text>
+            {this.state.todos.length == 0 ? <Text style={styles.nodata}>No data</Text> :
+              <>
+                <SwipeListView
+                  data={this.state.todos}
+                  renderItem={(data) => {
+                    return (
+                      <TouchableOpacity
+                        activeOpacity={1}
+                        style={styles.row}
+                        onPress={() => this.props.navigation.navigate('AddTodo', { data: JSON.stringify(data.item) })}
+                      >
+                        <View style={styles.itemText}>
+                          <Text style={styles.text}>{data.item.title}</Text>
+                          <Text style={styles.desc}>{data.item.desc.substr(0, 100)}</Text>
+                        </View>
+                      </TouchableOpacity>
+                    )
+                  }}
+                  keyExtractor={(_, ind) => ind.toString()}
+                  style={styles.liststyle}
+                  leftOpenValue={60}
+                  renderHiddenItem={(data) => (
+                    <TouchableOpacity style={styles.rowback} onPress={() => {
+                      let uid = auth().currentUser.uid;
+                      let reminders = database().ref('todos').child(uid)
+                      reminders.child(data.item.key).set(null)
+                    }}>
+                      <Image source={deleteimage} style={styles.deleteimage} />
+                    </TouchableOpacity>
+                  )}
+                />
+                {this.state.todos.length == 3 &&
+                  <TouchableOpacity style={styles.seebutton} onPress={() => this.props.navigation.navigate('Todo')}>
+                    <Text style={styles.seetext}>See All</Text>
+                  </TouchableOpacity>
+                }
+              </>
+            }
+          </View>
+
+          <FloatingAction
+            actions={actions}
+            onPressItem={(name) => {
+              console.log(name)
+              this.props.navigation.navigate(Routes[name]);
+            }}
+            distanceToEdge={{
+              vertical: 10,
+              horizontal: 10,
+            }}
+          />
+          <Loader loading={this.state.loading} />
         </View>
-        <FloatingAction
-          actions={actions}
-          onPressItem={(name) => {
-            this.props.navigation.navigate(Routes[name]);
-            console.log(`selected button: ${name}`);
-          }}
-          distanceToEdge={{
-            vertical: 10,
-            horizontal: 10,
-          }}
-        />
-        <Loader loading={this.state.loading} />
-      </ScrollView>
-    );
+      </>);
   }
 }
+const styles = StyleSheet.create({
+  scrollview: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
+  topbar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+  },
+  dash: {
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  profile: {
+    width: 50,
+    height: 50,
+    // resizeMode: 'contain',
+    borderColor: '#000',
+    marginLeft: 'auto',
+    borderRadius: 25,
+    borderWidth: 1
+  },
+  reminder: {
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#fff',
+  },
+  reminder2: {
+    padding: 10,
+    borderWidth: 1,
+    height: '100%',
+    borderColor: '#fff',
+    flex: 1
+  },
+  liststyle: {
+    marginTop: 20,
+    width: Dimensions.get('window').width,
+    alignSelf: "center",
+    paddingHorizontal: 10,
+    maxHeight: 210
+  },
+  row: {
+    backgroundColor: "white",
+    marginVertical: 2,
+    marginRight: 1,
+    height: 65,
+    paddingLeft: 20,
+    borderRadius: 5,
+    flexDirection: "row",
+    alignItems: "center",
+    shadowColor: '#000',
+    shadowOffset: {
+      width: -1,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+    elevation: 3,
+  },
+  itemText: {
+    flex: 1,
+  },
+  text: {
+    fontSize: 15,
+    marginRight: 15,
+    fontWeight: '600'
+  },
+  desc: {
+    fontSize: 12,
+    marginRight: 15,
+    marginTop: 5
+  },
+  timeWrapper: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  alarm: {
+    width: 15,
+    height: 15,
+    resizeMode: 'contain'
+  },
+  date: {
+    fontSize: 13,
+    marginLeft: 5
+  },
+  forward: {
+    width: 20,
+    height: 14,
+    resizeMode: "contain",
+    marginRight: 20,
+    marginLeft: 5,
+  },
+  rowback: {
+    width: 60,
+    height: 65,
+    marginTop: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: "#D62246",
+    borderRadius: 5,
+  },
+  deleteimage: {
+    height: 15,
+    width: 15,
+    resizeMode: 'contain'
+  },
+  seebutton: {
+    width: 100,
+    height: 40,
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: '#2176F5',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 'auto',
+    borderRadius: 5
+  },
+  seetext: {
+    fontSize: 14,
+    color: '#2176F5'
+  },
+  nodata: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginVertical: 40
+  }
+})
 
 export default Home;

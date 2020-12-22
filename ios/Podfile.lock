@@ -11,6 +11,37 @@ PODS:
     - React-Core (= 0.63.0)
     - React-jsi (= 0.63.0)
     - ReactCommon/turbomodule/core (= 0.63.0)
+  - Firebase/Auth (7.1.0):
+    - Firebase/CoreOnly
+    - FirebaseAuth (~> 7.1.0)
+  - Firebase/CoreOnly (7.1.0):
+    - FirebaseCore (= 7.1.0)
+  - Firebase/Database (7.1.0):
+    - Firebase/CoreOnly
+    - FirebaseDatabase (~> 7.1.0)
+  - Firebase/Storage (7.1.0):
+    - Firebase/CoreOnly
+    - FirebaseStorage (~> 7.1.0)
+  - FirebaseAuth (7.1.0):
+    - FirebaseCore (~> 7.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.0)
+    - GoogleUtilities/Environment (~> 7.0)
+    - GTMSessionFetcher/Core (~> 1.4)
+  - FirebaseCore (7.1.0):
+    - FirebaseCoreDiagnostics (~> 7.0)
+    - GoogleUtilities/Environment (~> 7.0)
+    - GoogleUtilities/Logger (~> 7.0)
+  - FirebaseCoreDiagnostics (7.3.0):
+    - GoogleDataTransport (~> 8.0)
+    - GoogleUtilities/Environment (~> 7.0)
+    - GoogleUtilities/Logger (~> 7.0)
+    - nanopb (~> 2.30906.0)
+  - FirebaseDatabase (7.1.0):
+    - FirebaseCore (~> 7.0)
+    - leveldb-library (~> 1.22)
+  - FirebaseStorage (7.1.0):
+    - FirebaseCore (~> 7.0)
+    - GTMSessionFetcher/Core (~> 1.4)
   - Flipper (0.41.5):
     - Flipper-Folly (~> 2.2)
     - Flipper-RSocket (~> 1.1)
@@ -67,9 +98,34 @@ PODS:
     - DoubleConversion
     - glog
   - glog (0.3.5)
+  - GoogleDataTransport (8.1.0):
+    - nanopb (~> 2.30906.0)
+  - GoogleUtilities/AppDelegateSwizzler (7.1.1):
+    - GoogleUtilities/Environment
+    - GoogleUtilities/Logger
+    - GoogleUtilities/Network
+  - GoogleUtilities/Environment (7.1.1):
+    - PromisesObjC (~> 1.2)
+  - GoogleUtilities/Logger (7.1.1):
+    - GoogleUtilities/Environment
+  - GoogleUtilities/Network (7.1.1):
+    - GoogleUtilities/Logger
+    - "GoogleUtilities/NSData+zlib"
+    - GoogleUtilities/Reachability
+  - "GoogleUtilities/NSData+zlib (7.1.1)"
+  - GoogleUtilities/Reachability (7.1.1):
+    - GoogleUtilities/Logger
+  - GTMSessionFetcher/Core (1.5.0)
+  - leveldb-library (1.22)
+  - nanopb (2.30906.0):
+    - nanopb/decode (= 2.30906.0)
+    - nanopb/encode (= 2.30906.0)
+  - nanopb/decode (2.30906.0)
+  - nanopb/encode (2.30906.0)
   - OpenSSL-Universal (1.0.2.19):
     - OpenSSL-Universal/Static (= 1.0.2.19)
   - OpenSSL-Universal/Static (1.0.2.19)
+  - PromisesObjC (1.2.11)
   - RCTRequired (0.63.0)
   - RCTTypeSafety (0.63.0):
     - FBLazyVector (= 0.63.0)
@@ -236,6 +292,10 @@ PODS:
     - React-cxxreact (= 0.63.0)
     - React-jsi (= 0.63.0)
   - React-jsinspector (0.63.0)
+  - react-native-image-picker (2.3.3):
+    - React
+  - react-native-safe-area-context (3.1.1):
+    - React
   - React-RCTActionSheet (0.63.0):
     - React-Core/RCTActionSheetHeaders (= 0.63.0)
   - React-RCTAnimation (0.63.0):
@@ -296,6 +356,37 @@ PODS:
     - React-Core (= 0.63.0)
     - React-cxxreact (= 0.63.0)
     - React-jsi (= 0.63.0)
+  - RNCAsyncStorage (1.12.0):
+    - React
+  - RNCMaskedView (0.1.10):
+    - React
+  - RNDateTimePicker (3.0.8):
+    - React-Core
+  - RNFBApp (10.1.0):
+    - Firebase/CoreOnly (~> 7.1.0)
+    - React-Core
+  - RNFBAuth (10.1.1):
+    - Firebase/Auth (~> 7.1.0)
+    - React-Core
+    - RNFBApp
+  - RNFBDatabase (10.1.1):
+    - Firebase/Database (~> 7.1.0)
+    - React-Core
+    - RNFBApp
+  - RNFBStorage (7.4.2):
+    - Firebase/Storage (~> 7.1.0)
+    - React
+    - RNFBApp
+  - RNGestureHandler (1.6.1):
+    - React
+  - RNKeychain (6.1.1):
+    - React
+  - RNReanimated (1.9.0):
+    - React
+  - RNScreens (2.9.0):
+    - React
+  - RNSnackbar (2.2.3):
+    - React
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
     - Yoga (~> 1.14)
@@ -337,6 +428,8 @@ DEPENDENCIES:
   - React-jsi (from `../node_modules/react-native/ReactCommon/jsi`)
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
+  - react-native-image-picker (from `../node_modules/react-native-image-picker`)
+  - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../node_modules/react-native/Libraries/NativeAnimation`)
   - React-RCTBlob (from `../node_modules/react-native/Libraries/Blob`)
@@ -347,6 +440,18 @@ DEPENDENCIES:
   - React-RCTText (from `../node_modules/react-native/Libraries/Text`)
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
+  - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
+  - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
+  - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
+  - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
+  - "RNFBAuth (from `../node_modules/@react-native-firebase/auth`)"
+  - "RNFBDatabase (from `../node_modules/@react-native-firebase/database`)"
+  - "RNFBStorage (from `../node_modules/@react-native-firebase/storage`)"
+  - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNKeychain (from `../node_modules/react-native-keychain`)
+  - RNReanimated (from `../node_modules/react-native-reanimated`)
+  - RNScreens (from `../node_modules/react-native-screens`)
+  - RNSnackbar (from `../node_modules/react-native-snackbar`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -354,6 +459,12 @@ SPEC REPOS:
     - boost-for-react-native
     - CocoaAsyncSocket
     - CocoaLibEvent
+    - Firebase
+    - FirebaseAuth
+    - FirebaseCore
+    - FirebaseCoreDiagnostics
+    - FirebaseDatabase
+    - FirebaseStorage
     - Flipper
     - Flipper-DoubleConversion
     - Flipper-Folly
@@ -361,7 +472,13 @@ SPEC REPOS:
     - Flipper-PeerTalk
     - Flipper-RSocket
     - FlipperKit
+    - GoogleDataTransport
+    - GoogleUtilities
+    - GTMSessionFetcher
+    - leveldb-library
+    - nanopb
     - OpenSSL-Universal
+    - PromisesObjC
     - YogaKit
 
 EXTERNAL SOURCES:
@@ -395,6 +512,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsiexecutor"
   React-jsinspector:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
+  react-native-image-picker:
+    :path: "../node_modules/react-native-image-picker"
+  react-native-safe-area-context:
+    :path: "../node_modules/react-native-safe-area-context"
   React-RCTActionSheet:
     :path: "../node_modules/react-native/Libraries/ActionSheetIOS"
   React-RCTAnimation:
@@ -415,6 +536,30 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/Libraries/Vibration"
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
+  RNCAsyncStorage:
+    :path: "../node_modules/@react-native-community/async-storage"
+  RNCMaskedView:
+    :path: "../node_modules/@react-native-community/masked-view"
+  RNDateTimePicker:
+    :path: "../node_modules/@react-native-community/datetimepicker"
+  RNFBApp:
+    :path: "../node_modules/@react-native-firebase/app"
+  RNFBAuth:
+    :path: "../node_modules/@react-native-firebase/auth"
+  RNFBDatabase:
+    :path: "../node_modules/@react-native-firebase/database"
+  RNFBStorage:
+    :path: "../node_modules/@react-native-firebase/storage"
+  RNGestureHandler:
+    :path: "../node_modules/react-native-gesture-handler"
+  RNKeychain:
+    :path: "../node_modules/react-native-keychain"
+  RNReanimated:
+    :path: "../node_modules/react-native-reanimated"
+  RNScreens:
+    :path: "../node_modules/react-native-screens"
+  RNSnackbar:
+    :path: "../node_modules/react-native-snackbar"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -425,6 +570,12 @@ SPEC CHECKSUMS:
   DoubleConversion: cde416483dac037923206447da6e1454df403714
   FBLazyVector: 6f1045c66f816849b33c4ff28930b611e89059a0
   FBReactNativeSpec: e856d5103d749483f86f53afafd8df4ed8a776bd
+  Firebase: 78e8dd2e39d653de6270432ad84fe8b59f7bf4e8
+  FirebaseAuth: f82c2cfcc1c107bb0a97735cdbce4eb2a601f710
+  FirebaseCore: 20046127eef0fcb8fa25df7fc12f7b97d4e48611
+  FirebaseCoreDiagnostics: d50e11039e5984d92c8a512be2395f13df747350
+  FirebaseDatabase: bf02ea57590aaab4e72b9b12b412a4c881ee81e2
+  FirebaseStorage: 80e2cd5200791540ca544f4dcac5e6b56994fc97
   Flipper: 33585e2d9810fe5528346be33bcf71b37bb7ae13
   Flipper-DoubleConversion: 38631e41ef4f9b12861c67d17cb5518d06badc41
   Flipper-Folly: c12092ea368353b58e992843a990a3225d4533c3
@@ -434,7 +585,13 @@ SPEC CHECKSUMS:
   FlipperKit: bc68102cd4952a258a23c9c1b316c7bec1fecf83
   Folly: b73c3869541e86821df3c387eb0af5f65addfab4
   glog: 40a13f7840415b9a77023fbcae0f1e6f43192af3
+  GoogleDataTransport: 116c84c4bdeb76be2a7a46de51244368f9794eab
+  GoogleUtilities: 3dc4ff0d5e4840e2fa8eef0889620e8c33d4218c
+  GTMSessionFetcher: b3503b20a988c4e20cc189aa798fd18220133f52
+  leveldb-library: 55d93ee664b4007aac644a782d11da33fba316f7
+  nanopb: 1bf24dd71191072e120b83dd02d08f3da0d65e53
   OpenSSL-Universal: 8b48cc0d10c1b2923617dfe5c178aa9ed2689355
+  PromisesObjC: 8c196f5a328c2cba3e74624585467a557dcb482f
   RCTRequired: e46bb77db03887b3e200d34b08515c804669db99
   RCTTypeSafety: 270fed6675c42f80fb87b47d626ef3cede1505e6
   React: e008906ff1328f9bccb345ff4f7826397ad223fc
@@ -445,6 +602,8 @@ SPEC CHECKSUMS:
   React-jsi: 254710f3a97e587427bfbf3011dacec2af66a1fc
   React-jsiexecutor: 0e0cb4e170ca72d4bb1179843d08dcbea3d100ac
   React-jsinspector: fc661eff8edbfb7e22119382c13f33bcadde0f3c
+  react-native-image-picker: 3d3f85baabca60a00b75fb8facc1376db7bbdafa
+  react-native-safe-area-context: 344b969c45af3d8464d36e8dea264942992ef033
   React-RCTActionSheet: aadd91a1d6cbfae50dd41f140004f816e9e47ade
   React-RCTAnimation: 7fa2ef6c0ef1e3f0b7d2261c827ec94412deb5e6
   React-RCTBlob: ccbbc70295aee3a76a70323b48f63fb7a7fcffd6
@@ -455,9 +614,21 @@ SPEC CHECKSUMS:
   React-RCTText: ba503bf4cce41881ca258ba789c33e017955efdd
   React-RCTVibration: 77ab1cf4a5eb854b88ad5ed3e9d8509ed124525e
   ReactCommon: f63556ee9e41e9802257228237e5e660451a03cf
+  RNCAsyncStorage: 2a692bcb9b69b76a2f1a95f33db057129700af64
+  RNCMaskedView: 5a8ec07677aa885546a0d98da336457e2bea557f
+  RNDateTimePicker: 8eba76de1afd556bc00c874f4d0c0616e30e32f1
+  RNFBApp: 2b4e07dfca4cf780b9e2d61bcc21e34d890cd654
+  RNFBAuth: 349a8d96d6ecc91d690c65ec0425cbb21b5831ed
+  RNFBDatabase: f3ea0bd70bf54204599ec0e655408308ac1c6dd8
+  RNFBStorage: f289116711c09313be0123ff84d5fd12087194ee
+  RNGestureHandler: 8f09cd560f8d533eb36da5a6c5a843af9f056b38
+  RNKeychain: db956c02a018f7dd3a0ea8a6cf3087bc1894bf2b
+  RNReanimated: b5ccb50650ba06f6e749c7c329a1bc3ae0c88b43
+  RNScreens: c526239bbe0e957b988dacc8d75ac94ec9cb19da
+  RNSnackbar: a08d0d7e1e18c7312cd2b9c6f476211267855bce
   Yoga: 7d2edc5b410474191962e6dee88ee67f9b328b6b
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
 PODFILE CHECKSUM: 9e05c392fa8794e800d6f6f83c26a4ffdf71b452
 
-COCOAPODS: 1.9.1
+COCOAPODS: 1.10.0

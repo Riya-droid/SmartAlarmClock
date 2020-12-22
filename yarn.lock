@@ -4997,6 +4997,11 @@ mkdirp@^0.5.1:
   dependencies:
     minimist "^1.2.5"
 
+moment@^2.29.1:
+  version "2.29.1"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.1.tgz#b2be769fa31940be9eeea6469c075e35006fa3d3"
+  integrity sha512-kHmoybcPV8Sqy59DwNDY3Jefr64lK/by/da0ViFcuA4DH0vQg5Q6Ze5VimxkfQNSC+Mls/Kx53s7TjP1RhFEDQ==
+
 ms@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.0.0.tgz#5608aeadfc00be6c2901df5f9861788de0d597c8"
@@ -5713,6 +5718,11 @@ react-native-snackbar@^2.2.3:
   version "2.2.3"
   resolved "https://registry.yarnpkg.com/react-native-snackbar/-/react-native-snackbar-2.2.3.tgz#0b1df239569d27372f1f7244bad5d1615d188a3f"
   integrity sha512-JDS3S50i7F2w8X5JQyamNc/cVHYHAxd74VETeNQ1rB73lClWk2J99xEWgRz2r6hPHhJMEp9dGR7NZMYAVS4ozQ==
+
+react-native-swipe-list-view@^3.2.5:
+  version "3.2.5"
+  resolved "https://registry.yarnpkg.com/react-native-swipe-list-view/-/react-native-swipe-list-view-3.2.5.tgz#e10297ae53c9df79a5ef93bd01f47c47ad5dc23b"
+  integrity sha512-WWXUO7rF4UD+Mu49ZKghK6wrcSREAHni6w5km5j4AqCJh8YypVvmfV2byVLTvWPzDosdxQmh/DXQHsKlnLR3uQ==
 
 react-native@0.63.0:
   version "0.63.0"

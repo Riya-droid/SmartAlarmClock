@@ -1,11 +1,12 @@
 import React from 'react';
-import {StyleSheet, Dimensions} from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 import THEME from '../../../config/theme';
 
 const styles = StyleSheet.create({
   containerStyle: {
     flex: 1,
     flexDirection: 'column',
+    backgroundColor: '#fff'
   },
   topbar: {
     backgroundColor: THEME.PRIMARY_BLUE,
@@ -15,7 +16,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     borderRadius: 30,
-    marginTop: -40,
+    marginTop: -20,
     alignContent: 'center',
     height: '100%',
     flexDirection: 'column',

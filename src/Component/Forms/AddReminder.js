@@ -10,7 +10,7 @@ import {
 
 import form from './styles/formstyle';
 
-import {Slidebutton, DatePicker, InputField, TextArea} from '../helpers';
+import { Slidebutton, DatePicker, InputField, TextArea } from '../helpers';
 
 import Snackbar from 'react-native-snackbar';
 
@@ -18,17 +18,31 @@ import back from '../../assets/back.png';
 
 import database from '@react-native-firebase/database';
 
-import auth from '@react-native-firebase/auth';
 import Loader from '../Loader';
+import auth from '@react-native-firebase/auth';
 
 export class AddReminder extends React.Component {
   constructor(props) {
     super(props);
+    let initialValue = {
+      title: '',
+      desc: '',
+      date: '',
+      edit: false
+    }
+    if (props.route.params && props.route.params.data) {
+      this.data = JSON.parse(props.route.params.data)
+      initialValue.title = this.data.title
+      initialValue.desc = this.data.desc
+      initialValue.date = new Date(this.data.date)
+      initialValue.edit = true
+    }
     this.state = {
       editdata: {
-        title: '',
-        desc: '',
-        date: '',
+        title: initialValue.title,
+        desc: initialValue.desc,
+        date: initialValue.date,
+        edit: initialValue.edit
       },
       reload: false,
       loading: false,
@@ -52,28 +66,31 @@ export class AddReminder extends React.Component {
   };
 
   handleSubmit = () => {
-    const {navigation} = this.props;
+    const { navigation } = this.props;
     let err = this.validateForm();
     if (!err) {
-      this.setState({loading: true});
+      this.setState({ loading: true });
       /**
        * save the data in database
        */
 
       let uid = auth().currentUser.uid;
 
-      let reminders = database().ref('reminders').child(uid).push();
-
-      console.log(this.state.editdata.date, '111');
+      let reminders = database().ref('reminders').child(uid)
+      if (this.state.editdata.edit) {
+        reminders = reminders.child(this.data.key)
+      } else {
+        reminders = reminders.push();
+      }
 
       reminders
         .set({
           title: this.state.editdata.title,
-          date: this.state.editdata.date,
+          date: this.state.editdata.date.toString(),
           desc: this.state.editdata.desc,
         })
         .then((res) => {
-          this.setState({loading: false}, () => {
+          this.setState({ loading: false }, () => {
             this.props.navigation.goBack(null);
           });
           console.log(res);
@@ -87,20 +104,20 @@ export class AddReminder extends React.Component {
         duration: Snackbar.LENGTH_SHORT,
         backgroundColor: '#D62246',
       });
-      this.setState({reload: true}, () => this.setState({reload: false}));
+      this.setState({ reload: true }, () => this.setState({ reload: false }));
     }
   };
 
   getValue = (key, value) => {
-    let ob = {...this.state.editdata};
+    let ob = { ...this.state.editdata };
     ob[key] = value;
-    this.setState({editdata: ob});
+    this.setState({ editdata: ob });
   };
 
   render() {
     return (
       <React.Fragment>
-        <SafeAreaView style={{backgroundColor: '#507df0'}} />
+        <SafeAreaView style={{ backgroundColor: '#507df0' }} />
         <View style={form.topbar}>
           <TouchableOpacity
             activeOpacity={1}
@@ -108,10 +125,10 @@ export class AddReminder extends React.Component {
             onPress={this.goback}>
             <Image source={back} style={form.backimage} />
           </TouchableOpacity>
-          <Text style={form.heading}>{`Add Reminder`}</Text>
+          <Text style={form.heading}>{this.state.editdata.edit ? 'Edit Reminder' : `Add Reminder`}</Text>
         </View>
         <ScrollView style={form.mainform} nestedScrollEnabled={true}>
-          <View style={{height: 10}} />
+          <View style={{ height: 10 }} />
           <InputField
             placeholder="Enter Title"
             label="Title"
@@ -137,7 +154,7 @@ export class AddReminder extends React.Component {
             getValue={this.getValue}
             editable={true}
           />
-          <View style={{height: 70}} />
+          <View style={{ height: 70 }} />
         </ScrollView>
         <Slidebutton submit={this.handleSubmit} reload={this.state.reload} />
         <Loader loading={this.state.loading} />
