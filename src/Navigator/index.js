@@ -5,6 +5,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import LoginScreen from '../Screens/LoginScreen';
 import HomeScreen from '../Screens/HomeScreen';
 import SettingScreen from '../Screens/SettingScreen';
+import AddReminderScreen from '../Screens/AddReminderscreen';
 
 function SettingsScreen() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Profile" component={SettingsScreen} />
         <Stack.Screen name="Settings" component={SettingScreen} />
+        <Stack.Screen name="AddReminder" component={AddReminderScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

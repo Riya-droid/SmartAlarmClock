@@ -62,7 +62,10 @@ class Settings extends React.Component {
     let user = auth().currentUser;
     console.log(user);
     this.setState({
-      user_data: {displayName: user.displayName, email: user.email},
+      user_data: {
+        displayName: user.displayName,
+        email: 'riya.mishra@gmail.com',
+      },
     });
   }
 

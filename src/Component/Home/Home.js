@@ -1,36 +1,61 @@
 import React from 'react';
-import {View, Text, TouchableOpacity, ScrollView, Image} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+  Dimensions,
+} from 'react-native';
+import {FloatingAction} from 'react-native-floating-action';
+
+import todo from '../../assets/to-do-list.png';
+import reminder from '../../assets/reminder.png';
+import alarm from '../../assets/alarm-clock.png';
+import location from '../../assets/pin.png';
+import database from '@react-native-firebase/database';
+import auth from '@react-native-firebase/auth';
 
 import * as Keychain from 'react-native-keychain';
-const data = [
+import Loader from '../Loader';
+
+const Routes = {
+  add_reminder: 'AddReminder',
+};
+
+const actions = [
   {
-    title: 'Buy Vegetables',
-    desc: 'For Soup 2KG',
-    time: '10.00 A.M',
+    text: 'Add Todo',
+    name: 'add_todo',
+    position: 2,
+    icon: todo,
   },
   {
-    title: 'Study Math',
-    desc: 'For EXAM',
-    time: '11.00 A.M',
+    text: 'Add Reminder',
+    name: 'add_reminder',
+    position: 1,
+    icon: reminder,
   },
   {
-    title: 'Meet Granny',
-    desc: 'Fun',
-    time: '01.00 P.M',
+    text: 'Add Location',
+    name: 'add_location',
+    position: 3,
+    icon: location,
   },
   {
-    title: 'Prepare Presentation',
-    desc: 'Capstone Project',
-    time: '04.00 P.M',
-  },
-  {
-    title: 'Prepare Soup',
-    desc: 'For Soup 2KG',
-    time: '07.00 P.M',
+    text: 'Add Alarm',
+    name: 'add_alarm',
+    position: 4,
+    icon: alarm,
   },
 ];
 
 class Home extends React.Component {
+  state = {
+    data: [],
+    loading: true,
+  };
+
   handleLogout = () => {
     Keychain.resetGenericPassword({
       service: 'Test2222',
@@ -45,12 +70,32 @@ class Home extends React.Component {
       });
   };
 
+  componentDidMount() {
+    this.uid = auth().currentUser.uid;
+    this.remindersRef = database().ref('reminders').child(this.uid);
+
+    this.remindersRef.on('value', (snapshot) => this.setData(snapshot));
+  }
+
+  setData(snapshot) {
+    if (snapshot.val()) this.setState({data: Object.values(snapshot.val())});
+
+    this.setState({loading: false});
+  }
+
+  componentWillUnmount() {
+    if (this.remindersRef) this.remindersRef.off('value', this.setData);
+  }
+
   render() {
     return (
       <ScrollView
         style={{
           flex: 1,
           backgroundColor: 'white',
+        }}
+        contentContainerStyle={{
+          height: '100%',
         }}>
         <View
           style={{
@@ -98,6 +143,10 @@ class Home extends React.Component {
         <View
           style={{
             padding: 10,
+            flex: 1,
+            borderWidth: 1,
+            height: '100%',
+            borderColor: '#fff',
           }}>
           <Text
             style={{
@@ -111,7 +160,7 @@ class Home extends React.Component {
               flex: 1,
               alignItems: 'center',
             }}>
-            {data.map((item, index) => (
+            {this.state.data.map((item, index) => (
               <View
                 key={index}
                 style={{
@@ -147,12 +196,24 @@ class Home extends React.Component {
                   style={{
                     marginLeft: 'auto',
                   }}>
-                  {item.time}
+                  {new Date(item.date).toLocaleTimeString()}
                 </Text>
               </View>
             ))}
           </View>
         </View>
+        <FloatingAction
+          actions={actions}
+          onPressItem={(name) => {
+            this.props.navigation.navigate(Routes[name]);
+            console.log(`selected button: ${name}`);
+          }}
+          distanceToEdge={{
+            vertical: 10,
+            horizontal: 10,
+          }}
+        />
+        <Loader loading={this.state.loading} />
       </ScrollView>
     );
   }
