@@ -3,15 +3,22 @@ import {
   View,
   Text,
   TouchableOpacity,
-  ScrollView,
   Image,
   SafeAreaView,
   StyleSheet,
-  Dimensions
+  Dimensions,
+  Platform,
+  NativeEventEmitter,
+  NativeModules
 } from 'react-native';
 import { FloatingAction } from 'react-native-floating-action';
 import database from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
+import ReactNativeAN from 'react-native-alarm-notification';
+import { handleGetDirections } from './Location'
+
+const { RNAlarmNotification } = NativeModules;
+const RNEmitter = new NativeEventEmitter(RNAlarmNotification);
 
 import * as Keychain from 'react-native-keychain';
 import Loader from '../Loader';
@@ -24,14 +31,66 @@ import clock from '../../static/clock.png';
 
 const Routes = {
   add_reminder: 'AddReminder',
-  add_todo: 'AddTodo'
+  add_todo: 'AddTodo',
+  add_location: 'AddLocation'
 };
 
+const alarmNotifData = {
+  title: 'Alarm',
+  message: 'Stand up',
+  vibrate: true,
+  play_sound: true,
+  schedule_type: 'once',
+  channel: 'wakeup',
+  data: { content: 'my notification id is 22' },
+  loop_sound: true,
+  has_button: true,
+};
+
+
 class Home extends React.Component {
+  _subscribeOpen;
+  _subscribeDismiss;
   state = {
     data: [],
     loading: true,
-    todos: []
+    todos: [],
+    fireDate: ReactNativeAN.parseDate(new Date(Date.now() + 3000)),
+    locations: []
+  };
+
+  setAlarm = async (data) => {
+    const fireDate = ReactNativeAN.parseDate(new Date(data.alarm))
+    const { update } = this.state;
+
+    const details = { ...alarmNotifData, title: data.title, message: data.desc, fire_date: fireDate, data: { id: data.key } };
+    console.log(`alarm set: ${fireDate}`);
+
+    try {
+      const alarm = await ReactNativeAN.scheduleAlarm(details);
+      console.log(alarm);
+      if (alarm) {
+        this.setState({
+          update: [...update, { date: `alarm set: ${fireDate}`, id: alarm.id }],
+        });
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  stopAlarmSound = () => {
+    ReactNativeAN.stopAlarmSound();
+  };
+
+  sendNotification = () => {
+    const details = {
+      ...alarmNotifData,
+      data: { content: 'my notification id is 45' },
+      sound_name: 'iphone_ringtone.mp3',
+      volume: 0.9,
+    };
+    ReactNativeAN.sendNotification(details);
   };
 
   handleLogout = () => {
@@ -50,17 +109,84 @@ class Home extends React.Component {
 
   componentDidMount() {
     this.uid = auth().currentUser.uid;
-    this.remindersRef = database().ref('reminders').child(this.uid).limitToLast(3)
-    this.todoRef = database().ref('todos').child(this.uid).limitToLast(3)
+    this.remindersRef = database().ref('reminders').child(this.uid)
+    this.todoRef = database().ref('todos').child(this.uid).limitToLast(2)
+    this.locationRef = database().ref('locations').child(this.uid)
 
     this.remindersRef.on('value', (snapshot) => {
       this.setData(snapshot)
     });
+    this.locationRef.on('value', (snapshot) => {
+      this.setLocationData(snapshot)
+    });
     this.todoRef.on('value', (snapshot) => {
       this.setTodoData(snapshot)
     });
+    this.setState({ loading: false })
+    this._subscribeDismiss = RNEmitter.addListener(
+      'OnNotificationDismissed',
+      (data) => {
+        const obj = JSON.parse(data);
+        console.log(`notification id: ${obj.id} dismissed`);
+      },
+    );
+
+    this._subscribeOpen = RNEmitter.addListener(
+      'OnNotificationOpened',
+      (data) => {
+        console.log(data);
+        const obj = JSON.parse(data);
+        let key = obj.data && obj.data.id
+        let uid = auth().currentUser.uid;
+        let reminders = database().ref('reminders').child(uid)
+        reminders.child(key).set(null)
+        console.log(`app opened by notification: ${obj.id}`);
+      },
+    );
+
+    if (Platform.OS === 'ios') {
+      this.showPermissions();
+
+      ReactNativeAN.requestPermissions({
+        alert: true,
+        badge: true,
+        sound: true,
+      }).then(
+        (data) => {
+          console.log('RnAlarmNotification.requestPermissions', data);
+        },
+        (data) => {
+          console.log('RnAlarmNotification.requestPermissions failed', data);
+        },
+      );
+    }
   }
 
+  componentWillUnmount() {
+    this._subscribeDismiss.remove();
+    this._subscribeOpen.remove();
+  }
+
+  showPermissions = () => {
+    ReactNativeAN.checkPermissions((permissions) => {
+      console.log(permissions);
+    });
+  };
+
+  setLocationData = (snapshot) => {
+    if (snapshot.val()) {
+      this.setState({
+        locations: Object.keys(snapshot.val()).map(id => { return { key: id, ...snapshot.val()[id] } }).slice(0, 2)
+      }, () => {
+        this.state.locations.map(val => {
+          this.setAlarm(val)
+        })
+      });
+    } else {
+      this.setState({ locations: [] })
+    }
+    this.setState({ loading: false });
+  }
   setTodoData(snapshot) {
     if (snapshot.val()) {
       this.setState({
@@ -76,7 +202,11 @@ class Home extends React.Component {
   setData(snapshot) {
     if (snapshot.val()) {
       this.setState({
-        data: Object.keys(snapshot.val()).map(id => { return { key: id, ...snapshot.val()[id] } })
+        data: Object.keys(snapshot.val()).map(id => { return { key: id, ...snapshot.val()[id] } }).slice(0, 2)
+      }, () => {
+        this.state.data.map(val => {
+          this.setAlarm(val)
+        })
       });
     } else {
       this.setState({ data: [] })
@@ -116,7 +246,7 @@ class Home extends React.Component {
           </View>
 
           <View style={styles.reminder}>
-            <Text style={styles.dash}>Reminders</Text>
+            <Text style={styles.dash}>Reminders and Alarms</Text>
             {this.state.data.length == 0 ? <Text style={styles.nodata}>No data</Text> :
               <>
                 <SwipeListView
@@ -152,8 +282,53 @@ class Home extends React.Component {
                     </TouchableOpacity>
                   )}
                 />
-                {this.state.data.length == 3 &&
+                {this.state.data.length == 2 &&
                   <TouchableOpacity style={styles.seebutton} onPress={() => this.props.navigation.navigate('Reminder')}>
+                    <Text style={styles.seetext}>See All</Text>
+                  </TouchableOpacity>
+                }
+              </>
+            }
+          </View>
+          <View style={styles.reminder}>
+            <Text style={styles.dash}>Locations</Text>
+            {this.state.locations.length == 0 ? <Text style={styles.nodata}>No data</Text> :
+              <>
+                <SwipeListView
+                  data={this.state.locations}
+                  renderItem={(data) => {
+                    return (
+                      <TouchableOpacity
+                        activeOpacity={1}
+                        style={styles.row}
+                        onPress={() => handleGetDirections(data.item.start_id, data.item.end_id)}
+                      >
+                        <View style={styles.itemText}>
+                          <Text style={styles.text}>{data.item.title}</Text>
+                          <Text style={styles.desc}>{data.item.desc.substr(0, 100)}</Text>
+                        </View>
+                        <View style={styles.timeWrapper}>
+                          <Image source={clock} style={styles.alarm} />
+                          <Text style={styles.date}>{moment(new Date(data.item.alarm)).format('MMM DD, hh:mm a')}</Text>
+                        </View>
+                      </TouchableOpacity>
+                    )
+                  }}
+                  keyExtractor={(_, ind) => ind.toString()}
+                  style={styles.liststyle}
+                  leftOpenValue={60}
+                  renderHiddenItem={(data) => (
+                    <TouchableOpacity style={styles.rowback} onPress={() => {
+                      let uid = auth().currentUser.uid;
+                      let reminders = database().ref('locations').child(uid)
+                      reminders.child(data.item.key).set(null)
+                    }}>
+                      <Image source={deleteimage} style={styles.deleteimage} />
+                    </TouchableOpacity>
+                  )}
+                />
+                {this.state.locations.length == 2 &&
+                  <TouchableOpacity style={styles.seebutton} onPress={() => this.props.navigation.navigate('Location')}>
                     <Text style={styles.seetext}>See All</Text>
                   </TouchableOpacity>
                 }
@@ -194,7 +369,7 @@ class Home extends React.Component {
                     </TouchableOpacity>
                   )}
                 />
-                {this.state.todos.length == 3 &&
+                {this.state.todos.length == 2 &&
                   <TouchableOpacity style={styles.seebutton} onPress={() => this.props.navigation.navigate('Todo')}>
                     <Text style={styles.seetext}>See All</Text>
                   </TouchableOpacity>
@@ -259,7 +434,7 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width,
     alignSelf: "center",
     paddingHorizontal: 10,
-    maxHeight: 210
+    maxHeight: 150
   },
   row: {
     backgroundColor: "white",

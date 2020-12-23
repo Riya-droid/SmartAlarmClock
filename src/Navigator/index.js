@@ -9,6 +9,8 @@ import AddReminderScreen from '../Screens/AddReminderscreen';
 import ReminderScreen from '../Screens/RemindersScreen'
 import AddToDoScreen from '../Screens/AddTodoScreen'
 import ToDoScreen from '../Screens/ToDoScreen'
+import AddLocationScreen from '../Screens/AddLocationScreen'
+import LocationScreen from '../Screens/LocationScreen'
 
 function SettingsScreen() {
   return (
@@ -32,6 +34,8 @@ export default function App() {
         <Stack.Screen name="Reminder" component={ReminderScreen} />
         <Stack.Screen name='AddTodo' component={AddToDoScreen} />
         <Stack.Screen name='Todo' component={ToDoScreen} />
+        <Stack.Screen name='AddLocation' component={AddLocationScreen} />
+        <Stack.Screen name='Location' component={LocationScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -19,7 +19,7 @@ class DatePicker extends React.Component {
 	}
 
 	convertdate = (date) => {
-		let monthNames = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
+		let monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 		let formatted = new Date(Date.parse(date));
 
 		var hr = formatted.getHours();
@@ -59,29 +59,29 @@ class DatePicker extends React.Component {
 
 	setDate = (date) => {
 		this.date = date;
-		this.setState({showdate:false},()=>{
+		this.setState({ showdate: false }, () => {
 			setTimeout(() => {
-				this.setState({showtime:true})
+				this.setState({ showtime: true })
 			}, 500);
 		})
 	};
-	
+
 	setTime = (time) => {
 		var dd = (this.date.getDate() < 10 ? '0' : '') + this.date.getDate();
-		var MM = ((this.date.getMonth() + 1) < 10 ? '0' : '') + (this.date.getMonth() + 1); 
-		let date = this.date.getFullYear()+"-"+MM+"-"+dd
+		var MM = ((this.date.getMonth() + 1) < 10 ? '0' : '') + (this.date.getMonth() + 1);
+		let date = this.date.getFullYear() + "-" + MM + "-" + dd
 		var hr = time.getHours();
 		var min = time.getMinutes();
-		var sec = time.getSeconds()
+		var sec = 0
 		var ms = String(time.getMilliseconds()).padStart(3, '0')
-		time = hr+":"+min+":"+sec+":"+ms
-		let t = (date+" "+time).split(/[- :]/)
+		time = hr + ":" + min + ":" + sec + ":" + ms
+		let t = (date + " " + time).split(/[- :]/)
 		let newdate = new Date(t[0], t[1] - 1, t[2], t[3], t[4], t[5])
 		this.setState({
-			showtime:false,
-			date:newdate,
+			showtime: false,
+			date: newdate,
 			value: this.convertdate(newdate)
-		},()=>this.props.setValue(this.props.name,newdate.toISOString()))
+		}, () => this.props.setValue(this.props.name, newdate.toISOString()))
 	};
 
 	render() {
@@ -104,7 +104,7 @@ class DatePicker extends React.Component {
 					onCancel={() => this.setState({ showdate: false, showtime: false })}
 					mode="date"
 					headerTextIOS="Pick date"
-					maximumDate={(this.props.maximumDate) ? this.props.maximumDate : new Date(2030,12,31)}
+					maximumDate={(this.props.maximumDate) ? this.props.maximumDate : new Date(2030, 12, 31)}
 					minimumDate={(this.props.minimumDate) ? this.props.minimumDate : this.state.date}
 					date={this.state.date}
 				/>

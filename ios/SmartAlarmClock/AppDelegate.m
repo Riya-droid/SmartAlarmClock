@@ -5,6 +5,9 @@
 #import <React/RCTRootView.h>
 #import <Firebase.h>
 
+#import <RnAlarmNotification.h>
+#import <UserNotifications/UNUserNotificationCenter.h>
+
 #ifdef FB_SONARKIT_ENABLED
 #import <FlipperKit/FlipperClient.h>
 #import <FlipperKitLayoutPlugin/FlipperKitLayoutPlugin.h>
@@ -44,10 +47,29 @@ static void InitializeFlipper(UIApplication *application) {
 
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *rootViewController = [UIViewController new];
+
+  UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+  center.delegate = self;
+  
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
   return YES;
+}
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center
+       willPresentNotification:(UNNotification *)notification withCompletionHandler: (void (^)(UNNotificationPresentationOptions options))completionHandler {
+  NSLog(@"handle push notification: %@", notification.request.content.userInfo);
+  [RnAlarmNotification didReceiveNotification:notification];
+  completionHandler(UNNotificationPresentationOptionBadge | UNNotificationPresentationOptionSound | UNNotificationPresentationOptionAlert);
+}
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center
+didReceiveNotificationResponse:(UNNotificationResponse *)response
+         withCompletionHandler:(void (^)(void))completionHandler  API_AVAILABLE(ios(10.0)){
+    NSLog(@"handle push notification in foreground");
+    [RnAlarmNotification didReceiveNotificationResponse:response];
+    completionHandler();
 }
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge

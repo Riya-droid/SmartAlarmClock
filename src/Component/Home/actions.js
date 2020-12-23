@@ -22,10 +22,4 @@ export const actions = [
         position: 3,
         icon: location,
     },
-    {
-        text: 'Add Alarm',
-        name: 'add_alarm',
-        position: 4,
-        icon: alarm,
-    },
 ];

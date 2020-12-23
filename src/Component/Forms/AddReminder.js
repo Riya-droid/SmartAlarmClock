@@ -88,6 +88,7 @@ export class AddReminder extends React.Component {
           title: this.state.editdata.title,
           date: this.state.editdata.date.toString(),
           desc: this.state.editdata.desc,
+          alarm: new Date(this.state.editdata.date).getTime()
         })
         .then((res) => {
           this.setState({ loading: false }, () => {
